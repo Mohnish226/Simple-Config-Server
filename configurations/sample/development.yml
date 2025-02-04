@@ -1,0 +1,15 @@
+configs:
+  version: 1.0
+  feature_1: true
+  feature_2: false
+  logging_level: debug
+  logging_file: development.log
+  snmp_host: "localhost"
+  snmp_port: 161
+  snmp_community: "public"
+  snmp_version: "v2c"
+  snmp_timeout: 1
+  snmp_retries: 5
+  snmp_max_repetitions: 25
+  snmp_non_repeaters: 0
+  
