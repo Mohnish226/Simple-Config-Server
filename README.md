@@ -44,8 +44,8 @@ Simple-Config-Server
  │       ├── limiter.go
  │
  │── /examples                  # Examples of API usage and setup
- │   ├── golang-client.go      # Example client in Go
- |   ├── python-client.py      # Example client in Python
+ │   ├── golang-client.go       # Example client in Go
+ |   ├── python-client.py       # Example client in Python
  │
  │── .gitignore                 # Git ignored files
  │── allowed_ips.txt            # List of allowed IPs for access control
