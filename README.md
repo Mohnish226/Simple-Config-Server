@@ -19,36 +19,36 @@ Simple-Config-Server
  │
  │── /configurations            # Stores project-specific configuration files
  │   ├── /sample
- │   │   ├── development.yml    # Example configuration file
- │   ├── Readme.md              # Documentation for adding configurations
+ │   │    └── development.yml    # Example configuration file
+ │   └── Readme.md              # Documentation for adding configurations
  │
  │── /internal                  # Internal modules for core functionality
  │   ├── /auth                  # JWT-based authentication
- │   │   ├── jwt.go
+ │   │    └── jwt.go
  │   │
  │   ├── /config                # Configuration loader & file watcher
- │   │   ├── config.go
- │   │   ├── watcher.go
+ │   │    ├── config.go
+ │   │    └── watcher.go
  │   │
  │   ├── /handler               # API handlers for retrieving configurations
- │   │   ├── handler.go
+ │   │    └── handler.go
  │   │
  │   ├── /ipfilter              # IP whitelisting for security
- │   │   ├── filter.go
- │   │   ├── watcher.go
+ │   │    ├── filter.go
+ │   │    └── watcher.go
  │   │
  │   ├── /logger                # Logging utility
- │   │   ├── logger.go
+ │   │    └── logger.go
  │   │
  │   ├── /rate_limiter          # Rate limiting middleware
- │   │    ├── limiter.go
+ │   │    └── limiter.go
  │   │
- │   ├── /scaffolding           # Create the Configurations directory structure
- │       ├── scaffold.go
+ │   └── /scaffolding           # Create the Configurations directory structure
+ │        └── scaffold.go
  │
  │── /examples                  # Examples of API usage and setup
  │   ├── golang-client.go       # Example client in Go
- |   ├── python-client.py       # Example client in Python
+ |   └─ python-client.py       # Example client in Python
  │
  │── .gitignore                 # Git ignored files
  │── allowed_ips.txt            # List of allowed IPs for access control
@@ -58,7 +58,7 @@ Simple-Config-Server
  │── go.sum                     # Go module checksum file
  │── main.go                    # Entry point of the application
  │── LICENSE                    # License file
- │── README.md                  # Documentation
+ └── README.md                  # Documentation
 ```
 
 ### Configuration Files
