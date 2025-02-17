@@ -7,6 +7,7 @@ import (
 	"simpleConfigServer/internal/handler"
 	"simpleConfigServer/internal/ipfilter"
 	"simpleConfigServer/internal/logger"
+	"simpleConfigServer/internal/scaffolding"
 )
 
 var ConfigDir = func() string {
@@ -31,6 +32,11 @@ var port = func() string {
 }()
 
 func main() {
+
+	if _, err := os.Stat(ConfigDir); os.IsNotExist(err) {
+		logger.Log.Printf("Configurations directory %s does not exist", ConfigDir)
+		scaffolding.Setup(ConfigDir, AllowedIPsFile)
+	}
 
 	ipfilter.LoadAllowedIPs(AllowedIPsFile)
 	config.LoadConfigs(ConfigDir)

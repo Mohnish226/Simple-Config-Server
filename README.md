@@ -41,7 +41,10 @@ Simple-Config-Server
  │   │   ├── logger.go
  │   │
  │   ├── /rate_limiter          # Rate limiting middleware
- │       ├── limiter.go
+ │   │    ├── limiter.go
+ │   │
+ │   ├── /scaffolding           # Create the Configurations directory structure
+ │       ├── scaffold.go
  │
  │── /examples                  # Examples of API usage and setup
  │   ├── golang-client.go       # Example client in Go
