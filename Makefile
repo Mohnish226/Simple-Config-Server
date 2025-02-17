@@ -1,3 +1,5 @@
+#!/usr/bin/make -f
+
 SHELL := /bin/bash
 
 BINARY_NAME := simple-config-server
