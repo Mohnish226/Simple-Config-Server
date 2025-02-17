@@ -19,7 +19,7 @@ Simple-Config-Server
  │
  │── /configurations            # Stores project-specific configuration files
  │   ├── /sample
- │   │    └── development.yml    # Example configuration file
+ │   │    └── development.yml   # Example configuration file
  │   └── Readme.md              # Documentation for adding configurations
  │
  │── /internal                  # Internal modules for core functionality
@@ -46,9 +46,9 @@ Simple-Config-Server
  │   └── /scaffolding           # Create the Configurations directory structure
  │        └── scaffold.go
  │
- │── /examples                  # Examples of API usage and setup
+ │── /clients                   # Example clients to fetch configurations
  │   ├── golang-client.go       # Example client in Go
- |   └─ python-client.py       # Example client in Python
+ |   └─ python-client.py        # Example client in Python
  │
  │── .gitignore                 # Git ignored files
  │── allowed_ips.txt            # List of allowed IPs for access control
