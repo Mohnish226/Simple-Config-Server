@@ -20,7 +20,7 @@ build-all: clean
 	@for os in $(OS_LIST); do \
 		for arch in $(ARCH_LIST); do \
 			echo "🚀 Building for $$os/$$arch..."; \
-			GOOS=$$os GOARCH=$$arch go build -o $(BUILD_DIR)/$(BINARY_NAME)-$$os-$$arch main.go; \
+			GOOS=$$os GOARCH=$$arch go build -v -o $(BUILD_DIR)/$(BINARY_NAME)-$$os-$$arch -ldflags="-w -s" .; \
 		done; \
 	done
 	@echo "✅ All builds complete."
@@ -28,12 +28,16 @@ build-all: clean
 build: 
 	@echo "🔨 Building the application..."
 	@mkdir -p $(BUILD_DIR)
-	@go build -o $(BUILD_DIR)/$(BINARY_NAME) main.go
+	@go build -v -o $(BUILD_DIR)/$(BINARY_NAME) -ldflags="-w -s" .
 	@echo "✅ Build complete."
 
 run: build
 	@echo "🚀 Running the application on port $(PORT)..."
 	@PORT=$(PORT) JWT_SECRET=$(JWT_SECRET) ./$(BUILD_DIR)/$(BINARY_NAME)
+
+dev: build
+	@echo "🚀 Running the application on port $(PORT)..."
+	@cd $(BUILD_DIR) && PORT=$(PORT) JWT_SECRET=$(JWT_SECRET) ./$(BINARY_NAME)
 
 clean:
 	@echo "🧹 Cleaning the build directory..."
