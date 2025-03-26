@@ -1,2 +1,5 @@
-127.0.0.1
-::1
+# Leave this file empty to allow all IPs
+# Or add specific IPs, one per line, to restrict access:
+# 127.0.0.1
+# ::1
+# 192.168.1.0/24

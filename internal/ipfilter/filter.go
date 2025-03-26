@@ -24,9 +24,20 @@ func LoadAllowedIPs(AllowedIPsFile string) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		ip := strings.TrimSpace(scanner.Text())
-		if ip != "" {
-			newIpMap[ip] = true
+		line := strings.TrimSpace(scanner.Text())
+
+		// Skip empty lines and comments
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// Remove any inline comments
+		if idx := strings.Index(line, "#"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
+		}
+
+		if line != "" {
+			newIpMap[line] = true
 		}
 	}
 
@@ -37,7 +48,6 @@ func LoadAllowedIPs(AllowedIPsFile string) {
 	mu.Lock()
 	allowedIPs = newIpMap
 	mu.Unlock()
-
 }
 
 func IsIPAllowed(ip string) bool {

@@ -24,3 +24,6 @@ go.work.sum
 # env file
 .env
 extra/.DS_Store
+
+# IP allowlist
+allowed_ips.txt
