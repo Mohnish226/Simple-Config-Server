@@ -35,12 +35,13 @@ fetch_config() {
 
     response=$(curl -s -w "%{http_code}" -X GET "$url" -H "Authorization: Bearer $token" -H "Content-Type: application/json")
 
-    if [[ "$response" == "200" ]]; then
+    response_code=$(echo "$response" | tail -c 4)
+
+    if [[ "$response_code" == "200" ]]; then
         echo "Config Data:"
-        cat response.json
+        echo "${response:0:${#response}-3}"
     else
         echo "Error: HTTP $response"
-        cat response.json
     fi
 }
 
