@@ -65,38 +65,68 @@ Simple-Config-Server
 
 Please refer to the [configurations](configurations/Readme.md) documentation for adding configuration files.
 
+### IP Allowlist Configuration
+
+The `allowed_ips.txt` file supports comments and can be organized with sections:
+
+```
+# Local development
+127.0.0.1
+::1
+
+# Production servers
+10.0.0.0/8
+172.16.0.0/12
+
+# Staging environment
+192.168.1.0/24
+```
+
+- Lines starting with `#` are treated as comments
+- Inline comments (after `#`) are supported
+- Empty lines are ignored
+- If the file is empty, all IPs are allowed
+
 ### Usage
 
-1. Clone the repository:
-2. Add configuration files to the `configurations` directory.
-3. Build the application:
+1. Clone the repository
+2. Build the application:
     ```bash
-    go build -o bin/simple-config-server main.go
+    make build
     ```
-4. Load the environment variables:
+3. Run the application:
     ```bash
-    export PORT=8080
-    export JWT_SECRET=secret
+    make run
     ```
-5. Run the application:
-    ```bash
-    ./bin/simple-config-server
-    ```
-6. Access the API:
+
+The application will automatically:
+- Create the configurations directory if it doesn't exist
+- Create a sample configuration file in `configurations/sample/development.yml`
+- Create an empty `allowed_ips.txt` file if it doesn't exist
+- All files will be created in the same directory as the binary
+
+Or with custom configuration paths:
+```bash
+./bin/simple-config-server --config-dir=/path/to/configs --allowed-ips=/path/to/ips.txt
+```
+
+Environment variables can also be used:
+```bash
+export CONFIG_DIR=/path/to/configs
+export ALLOWED_IPS_FILE=/path/to/ips.txt
+export PORT=8080
+export JWT_SECRET=secret
+./bin/simple-config-server
+```
+
+4. Access the API:
     ```bash
     curl -H "Authorization: Bearer <your_token>" -X GET http://127.0.0.1:8080/<project>/<environment>/<config>
     ```
 
-Or using the Makefile:
-
-```bash
-make build
-make run
-```
-
 ### Build Client to Fetch Configurations
 
-Please refer to the example client code in the [examples/client](examples/client) directory.
+Please refer to the example client code in the [client](clients) directory.
 
 ### Planned Features 🚀
 
@@ -104,6 +134,5 @@ Please refer to the example client code in the [examples/client](examples/client
 - [ ] Enable configuration push to allow updates directly from clients.
 - [ ] Introduce versioning to track and manage configuration changes.
 - [ ] Implement encryption & decryption to enhance configuration security.
-
 
 > Note: The configuration file should not contain any sensitive information such as passwords, API keys, etc. Sensitive information should be stored in a secure location and accessed using environment variables. This project is intended for use with non-sensitive configuration settings only.
