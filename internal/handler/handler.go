@@ -4,10 +4,10 @@ import (
 	"os"
 	"strings"
 
+	"simpleConfigServer/internal/audit"
 	"simpleConfigServer/internal/auth"
 	"simpleConfigServer/internal/config"
 	"simpleConfigServer/internal/ipfilter"
-	"simpleConfigServer/internal/logger"
 	"simpleConfigServer/internal/rate_limiter"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,58 +16,66 @@ import (
 var jwtSecret = os.Getenv("JWT_SECRET")
 
 func ConfigHandler(c *fiber.Ctx) error {
-	logger.Log.Printf("Endpoint hit: %s", c.Path())
-
-	// Get IP address from Fiber context
 	ip := c.IP()
-	logger.Log.Printf("IP address: %s", ip)
+	audit.LogSystem("REQUEST", "START", map[string]interface{}{
+		"path": c.Path(),
+		"ip":   ip,
+	})
 
 	// Check if IP is allowed
 	if !ipfilter.IsIPAllowed(ip) {
-		logger.Log.Printf("IP not allowed: %s", ip)
+		audit.LogSecurity(ip, "DENIED", "IP_FILTER", map[string]interface{}{
+			"reason": "IP not in allowed list",
+		})
 		return c.Status(fiber.StatusForbidden).SendString("IP not allowed")
 	}
 
 	limiter := rate_limiter.GetRateLimiter(ip)
 	if !limiter.Allow() {
-		logger.Log.Printf("Rate limit exceeded for %s", ip)
+		audit.LogSecurity(ip, "DENIED", "RATE_LIMIT", map[string]interface{}{
+			"reason": "Rate limit exceeded",
+		})
 		return c.Status(fiber.StatusTooManyRequests).SendString("Too Many Requests")
 	}
 
 	tokenString := strings.TrimPrefix(c.Get("Authorization"), "Bearer ")
-	if !auth.ValidateJWT(tokenString) {
-		logger.Log.Printf("Unauthorized access attempt to %s", c.Path())
+	claims, isValid := auth.ValidateJWT(tokenString)
+	if !isValid {
+		audit.LogAuth(ip, "FAILED", "")
 		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorized")
 	}
+	audit.LogAuth(ip, "SUCCESS", claims.UserID)
 
 	vars := strings.Split(c.Path(), "/")
 	if len(vars) < 4 {
-		logger.Log.Printf("Invalid request path: %s", c.Path())
+		audit.LogSystem("REQUEST", "INVALID", map[string]interface{}{
+			"reason": "Invalid request path",
+			"path":   c.Path(),
+		})
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid request path")
 	}
 
 	product, env, configKey := vars[1], vars[2], vars[3]
-	logger.Log.Printf("Product: %s, Environment: %s, Config Key: %s", product, env, configKey)
 
 	if env != "staging" && env != "production" && env != "development" {
-		logger.Log.Printf("Unsupported environment: %s", env)
+		audit.LogConfigAccess(ip, "DENIED", product, env, configKey, claims.UserID)
 		return c.Status(fiber.StatusNotFound).SendString("Environment not supported")
 	}
 
 	configs := config.GetConfigs()
 	productConfigs, exists := configs[product]
 	if !exists {
-		logger.Log.Printf("Product not found: %s", product)
+		audit.LogConfigAccess(ip, "DENIED", product, env, configKey, claims.UserID)
 		return c.Status(fiber.StatusNotFound).SendString("Product not found")
 	}
 
 	configValue, found := productConfigs[configKey]
 	if !found {
-		logger.Log.Printf("Configs not found: %s for product %s", configKey, product)
+		audit.LogConfigAccess(ip, "DENIED", product, env, configKey, claims.UserID)
 		return c.Status(fiber.StatusNotFound).SendString("Configs not found")
 	}
 
-	logger.Log.Printf("Successfully retrieved configs: %s for product %s", configKey, product)
+	audit.LogConfigAccess(ip, "SUCCESS", product, env, configKey, claims.UserID)
 	response := map[string]string{configKey: configValue}
 
 	// Set security headers

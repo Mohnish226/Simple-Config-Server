@@ -4,6 +4,7 @@ import (
 	"flag"
 	"os"
 	"path/filepath"
+	"simpleConfigServer/internal/audit"
 	"simpleConfigServer/internal/config"
 	"simpleConfigServer/internal/handler"
 	"simpleConfigServer/internal/ipfilter"
@@ -103,6 +104,13 @@ func main() {
 
 	// Setup routes
 	app.Get("/*", handler.ConfigHandler)
+
+	// Log system startup
+	audit.LogSystem("STARTUP", "SUCCESS", map[string]interface{}{
+		"config_dir":       configDir,
+		"allowed_ips_file": allowedIPsFile,
+		"port":             port,
+	})
 
 	// Start server
 	applogger.Log.Printf("Starting server on %s", port)
